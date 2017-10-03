@@ -43,13 +43,27 @@ class pen(item):
 
 class phone(item):
     def __init__(self):
+        self.numbers = {}
         super(phone, self).__init__(name="phone",
                                     true_name="Phone",
                                     description="My mobile phone - a bulky classic from years ago. The battery will last all week, but if I want to do anything other than ring people I'll have to use a computer.",
                                     discovered=True,
                                     obtainable=True)
-    def phone_call(self, phone_number):
-        
+    def add_number(self, new_contact, phone_number):
+        self.numbers[new_contact] = (phone_number)
+    def phone_call(self):
+        print "Who shall I ring?"
+        for key in self.numbers.keys():
+            print " -- {}".format(key.title())
+        print " -- Cancel"
+        chosen = raw_input("> ").lower()
+        if chosen == "cancel":
+            return "Guess there's no one I need to speak to now."
+        else:
+            for key in self.numbers.keys():
+                if key == chosen:
+                    return "I dial the number for {}.".format(chosen)
+            return "I don't know that number."
 
 class fingerprint(item):
     def __init__(self):
@@ -89,3 +103,9 @@ class lighter(item):
                                       description="My silver zippo lighter. It's been passed down for generations on my Father's side, though as far as I can tell I'm the first to actually use the damn thing.",
                                       discovered=True,
                                       obtainable=True)
+
+phone = phone()
+phone.add_number("ruby", "01234")
+phone.add_number("tem", "56789")
+phone.add_number("ash", "986245")
+print phone.phone_call()
