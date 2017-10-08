@@ -22,7 +22,7 @@ class room(object):
         if len(self.inventory) != 0:
             look_desc += "You can see the following items:\n"
             for item in self.inventory:
-                look_desc += " -- {}\n".format(item.name.title())
+                look_desc += "-- {}\n".format(item.name.title())
                 item.discovered = True
         if len(self.objects) != 0:
             for possible_object in self.objects:
@@ -43,9 +43,6 @@ class startroom(room):
                                         connect_text="From here you can see two doors, labelled 'Key Room' and 'Paper Room'.",
                                         inventory=[],
                                         objects=[])
-   # def look_desc(self):
-   #     look_desc = "On closer inspection, there's still nothing. You should move on.\n\nFrom here you can see two doors, labelled 'Key Room' and 'Paper Room'."
-   #     return look_desc
 
 class keyroom(room):
     def __init__(self):
@@ -57,12 +54,6 @@ class keyroom(room):
                                       connect_text="From here you can see one door, labelled 'Start Room'.",
                                       inventory=[],
                                       objects=[])
-    # def look_desc(self):
-    #     look_desc = "The room is mostly bare"
-    #     if len(self.items) != 0:
-    #         look_desc += ", with a large key in the centre of the floor"
-    #     look_desc += ".\n\nFrom here you can see one door, labelled 'Start Room'."
-    #     return look_desc
 
 class paperroom(room):
     def __init__(self):
@@ -74,12 +65,6 @@ class paperroom(room):
                                         connect_text="From here you can see three doors, labelled 'Start Room', 'End Room' and 'Death Room'.",
                                         inventory=[],
                                         objects=[])
-    # def look_desc(self):
-    #     look_desc = "The room is mostly bare"
-    #     if len(self.inventory) != 0:
-    #         look_desc += ", with a piece of paper on the floor"
-    #     look_desc += ".\n\nFrom here you can see three doors, labelled 'Start Room', 'End Room' and 'Death Room'."
-    #     return look_desc
 
 class deathroom(room):
     def __init__(self):
@@ -91,9 +76,6 @@ class deathroom(room):
                                         connect_text="",
                                         inventory=[],
                                         objects=[])
-    # def look_desc(self):
-    #     look_desc = "You're totally dead."
-    #     return look_desc
     def modify_player(self, player):
         player.is_alive = False
         print "Better luck next time."
@@ -108,9 +90,6 @@ class endroom(room):
                                       connect_text="From here you can see one door, labelled 'Paper Room'.",
                                       inventory=[],
                                       objects=[])
-    # def look_desc(self):
-    #     look_desc = "Other than the large locked door, there's nothing else to see.\n\nFrom here you can see one door, labelled 'Paper Room'"
-    #     return look_desc
 
 
 rooms = {

@@ -43,7 +43,7 @@ def move_action(dest, player):
         player.currentroom = rooms["{} {}".format(dest[0], dest[1])]
         print "\n--------------------------------------\n"
         player.currentroom.modify_player(player)
-        return player.currentroom.intro_desc
+        return "{}\n\n".format(player.currentroom.intro_desc)
     else:
         return "Doesn't look like you can get there from here."
 
