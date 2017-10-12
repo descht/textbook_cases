@@ -6,13 +6,17 @@ replace_dict = [
     [" at ", " "],
     [" to ", " "],
     [" the ", " "],
+    [" is ", " "],
     ["with", "on"],
+    ["and", "on"],
     ["pick up", "get"],
     ["grab", "get"],
     ["collect", "get"],
     ["check", "look"],
     ["search", "look"],
-    ["examine", "look"]
+    ["examine", "look"],
+    ["combine ", "compare "],
+    ["look around", "look"]
 ]
 
 class Player(object):
@@ -162,6 +166,30 @@ def close_action(close_list, player):
                 return possible_object.close(player)
         return "Doesn't look like theres one of those around."
 
+def compare_action(compare_list, player):
+    try:
+        split_index = compare_list.index("on")
+    except:
+        return "What do you want to compare that with?"
+    compare1 = ""
+    compare2 = ""
+    for i in range(len(compare_list)):
+        if i < split_index:
+            compare1 += "{} ".format(compare_list[i])
+        elif i > split_index:
+            compare2 += "{} ".format(compare_list[i])
+    compare1 = compare1.strip()
+    compare2 = compare2.strip()
+    #print "evidence 1: <{}>\nevidence 2: <{}>".format(compare1, compare2)
+
+    for possible_item in player.evidence:
+        if compare1 in possible_item.name:
+            for possible_item2 in player.evidence:
+                if compare2 in possible_item2.name:
+                    return possible_item.compares(player, possible_item2)
+            return "Doesn't look like I have that to compare against."
+    return "Doesn't look like I have that to compare."
+
 def check_action(action, player):
     action = action.split()
     if len(action) == 0:
@@ -186,5 +214,7 @@ def check_action(action, player):
             return open_action(action, player)
         elif verb == "close":
             return close_action(action, player)
+        elif verb == "compare":
+            return compare_action(action, player)
         else:
             return "Sorry, I don't know what you meant by that."

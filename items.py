@@ -14,7 +14,7 @@ class item(object):
     def modify_object(self):
         return "That doesn't work like that."
     def look_desc(self, player):
-        return self.description
+        return "{}\n".format(self.description)
     def __str__(self):
         return "{}\n=====\n{}\nDiscovered: {}\nObtainable: {}\n".format(self.name, self.description, self.discovered, self.obtainable)
 
@@ -23,11 +23,12 @@ class evidence(item):
         self.combines = combines
         self.combo_text = combo_text
         super(evidence, self).__init__(name, true_name, state, description, discovered, obtainable)
-    def combines(self, player, second_item):
-        if second_item.combines == self.combines and self.combines != -1:
+    def compares(self, player, second_item):
+        if second_item.combines.true_name == self.combines.true_name and self.combines != -1:
             player.evidence.remove(second_item)
             player.evidence.remove(self)
-            return self.combo_text
+            player.evidence.append(self.combines)
+            return "{}\n".format(self.combo_text)
         else:
             return "Those two don't go together."
 
@@ -36,12 +37,14 @@ class evidence(item):
 class notebook(item):
     def __init__(self):
         self.contents = {}
-        super(notebook, self).__init__(name=["notebook"],
-                                       true_name="Notebook",
-                                       state="",
-                                       description="My pocket sized notebook, for jotting down notes on what happens in the case.",
-                                       discovered=True,
-                                       obtainable=True)
+        super(notebook, self).__init__(
+                                        name=["notebook"],
+                                        true_name="Notebook",
+                                        state="",
+                                        description="My pocket sized notebook, for jotting down notes on what happens in the case.",
+                                        discovered=True,
+                                        obtainable=True
+                                    )
     def add_entry(self, new_key, new_entry):
         self.contents[new_key] = new_entry
     def remove_entry(self, remove_key):
@@ -55,22 +58,26 @@ class notebook(item):
 
 class pen(item):
     def __init__(self):
-        super(pen, self).__init__(name=["pen"],
-                                  true_name="Pen",
-                                  state="",
-                                  description="A plain, blue biro. Would have preferred black, but it's the only pen I could find on whort notice when I was called.",
-                                  discovered=True,
-                                  obtainable=True)
+        super(pen, self).__init__(
+                                    name=["pen"],
+                                    true_name="Pen",
+                                    state="",
+                                    description="A plain, blue biro. Would have preferred black, but it's the only pen I could find on whort notice when I was called.",
+                                    discovered=True,
+                                    obtainable=True
+                                )
 
 class phone(item):
     def __init__(self):
         self.numbers = {}
-        super(phone, self).__init__(name=["phone"],
+        super(phone, self).__init__(
+                                    name=["phone"],
                                     true_name="Phone",
                                     state="",
                                     description="My mobile phone - a bulky classic from years ago. The battery will last all week, but if I want to do anything other than ring people I'll have to use a computer.",
                                     discovered=True,
-                                    obtainable=True)
+                                    obtainable=True
+                                )
     def modify_object(self, new_contact):
         self.numbers[new_contact] = 0
     def use_item(self):
@@ -92,12 +99,14 @@ class phone(item):
 
 class fingerprint(item):
     def __init__(self):
-        super(fingerprint, self).__init__(name=["fingerprint kit"],
-                                          true_name="Fingerprint Kit",
-                                          state="Incomplete",
-                                          description="A kit for gathering prints in the field. It comes with a brush, powder, tape and ink.",
-                                          discovered=True,
-                                          obtainable=True)
+        super(fingerprint, self).__init__(
+                                            name=["fingerprint kit"],
+                                            true_name="Fingerprint Kit",
+                                            state="Incomplete",
+                                            description="A kit for gathering prints in the field. It comes with a brush, powder, tape and ink.",
+                                            discovered=True,
+                                            obtainable=True
+                                        )
     def modify_object(self, player, use_item):
         if use_item in notebook().name:
             if self.state == "Incomplete":
@@ -112,22 +121,26 @@ class fingerprint(item):
 
 class dna(item):
     def __init__(self):
-        super(dna, self).__init__(name=["dna kit"],
-                                  true_name="DNA Kit",
-                                  state="",
-                                  description="A kit for gathering DNA evidence, containing a bundle of cotten swabs. I'm pretty sure they come from the same place as the ones in my bathroom at home.",
-                                  discovered=True,
-                                  obtainable=True)
+        super(dna, self).__init__(
+                                    name=["dna kit"],
+                                    true_name="DNA Kit",
+                                    state="",
+                                    description="A kit for gathering DNA evidence, containing a bundle of cotten swabs. I'm pretty sure they come from the same place as the ones in my bathroom at home.",
+                                    discovered=True,
+                                    obtainable=True
+                                )
 
 class cigarettes(item):
     def __init__(self, amount):
         self.amount = amount
-        super(cigarettes, self).__init__(name=["cigarettes"],
-                                         true_name="Cigarettes",
-                                         state="",
-                                         description="My pack of cigarettes. I find smoking always helps me process what I've seen in the case so far, and plan out what my next actions should be. Looks like there's only {} left.".format(self.amount),
-                                         discovered=True,
-                                         obtainable=True)
+        super(cigarettes, self).__init__(
+                                            name=["cigarettes"],
+                                            true_name="Cigarettes",
+                                            state="",
+                                            description="My pack of cigarettes. I find smoking always helps me process what I've seen in the case so far, and plan out what my next actions should be. Looks like there's only {} left.".format(self.amount),
+                                            discovered=True,
+                                            obtainable=True
+                                        )
     def use_item(self):
         if self.amount == 0:
             return "Damn, I'm out. I'll have to remember to pick some up later."
@@ -137,71 +150,94 @@ class cigarettes(item):
 
 class lighter(item):
     def __init__(self):
-        super(lighter, self).__init__(name=["lighter"],
-                                      true_name="Lighter",
-                                      state="",
-                                      description="My silver zippo lighter. It's been passed down for generations on my Father's side, though as far as I can tell I'm the first to actually use the damn thing.",
-                                      discovered=True,
-                                      obtainable=True)
+        super(lighter, self).__init__(
+                                        name=["lighter"],
+                                        true_name="Lighter",
+                                        state="",
+                                        description="My silver zippo lighter. It's been passed down for generations on my Father's side, though as far as I can tell I'm the first to actually use the damn thing.",
+                                        discovered=True,
+                                        obtainable=True
+                                    )
 
 #Evidence -----------------------
 
 class victim_fingerprints(evidence):
     def __init__(self):
-        super(victim_fingerprints, self).__init__(name=["victims fingerprints", "victim's fingerprints"],
-                                                  true_name="Victim's Fingerprints",
-                                                  state="",
-                                                  description="A copy of the victim's fingerprints, on a page from my notebook.",
-                                                  discovered=True,
-                                                  obtainable=True,
-                                                  combines=-1,
-                                                  combo_text="")
+        super(victim_fingerprints, self).__init__(
+                                                    name=["victims fingerprints", "victim's fingerprints"],
+                                                    true_name="Victim's Fingerprints",
+                                                    state="",
+                                                    description="A copy of the victim's fingerprints, on a page from my notebook.",
+                                                    discovered=True,
+                                                    obtainable=True,
+                                                    combines=-1,
+                                                    combo_text=""
+                                                )
 
 class victim_dna(evidence):
     def __init__(self):
-        super(victim_dna, self).__init__(name=["victims dna", "victim's dna"],
-                                         true_name="Victim's DNA",
-                                         state="",
-                                         description="A swab of DNA, taken from the victim.",
-                                         discovered=True,
-                                         obtainable=True,
-                                         combines=-1,
-                                         combo_text="")
+        super(victim_dna, self).__init__(
+                                            name=["victims dna", "victim's dna"],
+                                            true_name="Victim's DNA",
+                                            state="",
+                                            description="A swab of DNA, taken from the victim.",
+                                            discovered=True,
+                                            obtainable=True,
+                                            combines=-1,
+                                            combo_text=""
+                                        )
 
 class missing_knife(evidence):
     def __init__(self):
-        super(missing_knife, self).__init__(name=["utensil holder", "missing knife", "empty knife slot"],
+        super(missing_knife, self).__init__(
+                                            name=["utensil holder", "missing knife", "empty knife slot"],
                                             true_name="Missing Knife from Kitchen",
                                             state="Unseen",
                                             description="An empty slot in the utensil holder, intended to hold a sharp knife. It might mean nothing, but it seems a little odd given how pristine the rest of the kitchen is.",
                                             discovered=False,
                                             obtainable=False,
-                                            combines=0,
-                                            combo_text="Combined the knife and the wound.")
+                                            combines=knife_from_kitchen(),
+                                            combo_text="A stab wound made by a regular kitchen knife, and a spot from which a kitchen knife is obviously missing. Not a very groundbreaking deduction, but the most likely answer at this point is that the victim was killed using a knife found on the scene, before the knife was removed somehow. This could also just be a coincidence, but to find out either way I really need to track down that knife."
+                                        )
     def look_desc(self, player):
         if self.state == "Unseen":
             self.state = "Seen"
             player.evidence.append(self)
-            return "The utensil holder is the only thing of note on the counters - a long block of wood, with clearly defined slots for various wooden spoons, knives, stirrers, and other utensils I couldn't possibly name. There's only one thing amiss - one of the slots, clearly intended for a large knife, is empty. It might mean nothing, but I'll make a note of it just in case."
+            return "The utensil holder is a simple design - a long block of wood, with clearly defined slots for various wooden spoons, knives, stirrers, and other utensils I couldn't possibly name. There's only one thing missing - one of the slots, clearly intended for a large knife, is empty. It might mean nothing, but I'll make a note of it just in case.\n"
         else:
             return self.description
 
 class stab_wound(evidence):
     def __init__(self):
-        super(stab_wound, self).__init__(name=["wound", "stomach"],
-                                         true_name="Stab Wound on Victim",
-                                         state="Unseen",
-                                         description="The fatal wound on the victim. The wound only looks to be about an inch wide, meaning the murder weapon itself isn't too big - about the size of standard kitchen knife.",
-                                         discovered=False,
-                                         obtainable=False,
-                                         combines=0,
-                                         combo_text="Combined the wound and the knife.")
+        super(stab_wound, self).__init__(
+                                            name=["wound", "stomach"],
+                                            true_name="Stab Wound on Victim",
+                                            state="Unseen",
+                                            description="The fatal wound on the victim. The wound only looks to be about an inch wide, meaning the murder weapon itself isn't too big - about the size of standard kitchen knife.",
+                                            discovered=False,
+                                            obtainable=False,
+                                            combines=knife_from_kitchen(),
+                                            combo_text="A stab wound made by a regular kitchen knife, and a spot from which a kitchen knife is obviously missing. Not a very groundbreaking deduction, but the most likely answer at this point is that the victim was killed using a knife found on the scene, before the knife was removed somehow. This could also just be a coincidence, but to find out either way I really need to track down that knife."
+                                        )
     def look_desc(self, player):
         if self.state == "Unseen":
             self.state = "Seen"
             self.name.append("stab wound")
             self.name.append("knife wound")
             player.evidence.append(self)
-            return "I carefully lift the victims hand, and check the wound. There's a single wound on the left side of his stomach, about an inch wide. The size and shape means it was most likely made by an average sized knife, the kind that's commonly found in kitchens throughout households across the country. Great."
+            return "I carefully lift the victims hand, and check the wound. There's a single wound on the left side of his stomach, about an inch wide. The size and shape means it was most likely made by an average sized knife, the kind that's commonly found in kitchens throughout households across the country. Great.\n"
         else:
             return self.description
+
+class knife_from_kitchen(evidence):
+    def __init__(self):
+        super(knife_from_kitchen, self).__init__(
+                                                    name=["murder weapon from kitchen", "murder weapon from scene"],
+                                                    true_name="Murder Weapon is from the Scene",
+                                                    state="",
+                                                    description="The victim was stabbed, and the most likely weapon at the moment seems like one of the knives from the scene, which is currently missing. Did the murderer dispose of it?",
+                                                    discovered=True,
+                                                    obtainable=False,
+                                                    combines="",
+                                                    combo_text=""
+                                                )

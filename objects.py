@@ -23,7 +23,7 @@ class world_object(object):
     def look_desc(self, player):
         for item in self.inventory:
             item.discovered = True
-        return self.description
+        return "{}\n".format(self.description)
     def __str__(self):
         return "{}\n=====\n{}\nDiscovered: {}\nInventory: {}\nState: {}\n".format(self.name, self.description, self.discovered, self.inventory, self.state)
 
@@ -31,14 +31,16 @@ class world_object(object):
 
 class body(world_object):
     def __init__(self):
-        super(body, self).__init__(name=["body", "corpse", "victim"],
-                                   true_name="body",
-                                   description="The body of a caucasian male, looks to be about 30 years old. He's lying on his back, clutching what appears to be a stab wound on his stomach with his right hand, and stretching upwards towards the back door with his left hand. Other than being dead, he looks remarkably unremarkable.",
-                                   discovered=False,
-                                   has_inv=True,
-                                   inventory=[stab_wound()],
-                                   state=["DNA", "FP"],
-                                   use_item=[fingerprint(), dna()])
+        super(body, self).__init__(
+                                    name=["body", "corpse", "victim"],
+                                    true_name="body",
+                                    description="The body of a caucasian male, looks to be about 30 years old. He's lying on his back, clutching what appears to be a stab wound on his stomach with his right hand, and stretching upwards towards the back door with his left hand. Other than being dead, he looks remarkably unremarkable.",
+                                    discovered=False,
+                                    has_inv=True,
+                                    inventory=[stab_wound()],
+                                    state=["DNA", "FP"],
+                                    use_item=[fingerprint(), dna()]
+                                )
     def modify_object(self, player, item_name):
         if self.discovered:
             if item_name in fingerprint().name:
@@ -70,6 +72,13 @@ class body(world_object):
 
 class counter(world_object):
     def __init__(self):
-        super(counter, self).__init__(name=["counter", "worktop", "counters", "kitchen counter", "kitchen counters"],
-                                      true_name="Kitchen Counter",
-                                      )
+        super(counter, self).__init__(
+                                        name=["counter", "worktop", "counters", "kitchen counter", "kitchen counters", "north counter", "west counter"],
+                                        true_name="Kitchen Counter",
+                                        description="The counters running against two walls of the kitchen are completely clear of all clutter - clearly Roger likes to keep his house in order. The only thing of note is a utensil holder, at the back of the counter against the wall.",
+                                        discovered=False,
+                                        has_inv=True,
+                                        inventory=[missing_knife()],
+                                        state="",
+                                        use_item=[]
+                                    )

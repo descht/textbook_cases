@@ -36,16 +36,18 @@ class room(object):
 #Specific rooms -----------------------------------------------------------
 class kitchen(room):
     def __init__(self):
-        super(kitchen, self).__init__(room_id=1,
-                                      name=["kitchen"],
-                                      true_name="Kitchen",
-                                      intro_desc="Roger's kitchen is reasonably sized - there's a handful of furniture and various kitchen appliances, and still enough floor space left over for two or three people to move around without getting in each others way. At least, not too much.",
-                                      look_text="There are two kitchen counters running along the North and West walls, and a small table and chairs in the South-East corner. Next to the table are a couple of bins, and a door in the East wall which leads outside. Finally, there's a body lying on the floor. I'm going to make an educated guess and say that the last isn't an intentional design feature.",
-                                      connects=[],
-                                      connect_text="There's one doorway back into the living room, which Roger is currently standing in.",
-                                      inventory=[missing_knife()],
-                                      #objects=[body(), bins(), counter(), roger()]
-                                      objects=[body()])
+        super(kitchen, self).__init__(
+                                        room_id=1,
+                                        name=["kitchen"],
+                                        true_name="Kitchen",
+                                        intro_desc="Roger's kitchen is reasonably sized - there's a handful of furniture and various kitchen appliances, and still enough floor space left over for two or three people to move around without getting in each others way. At least, not too much.",
+                                        look_text="There are two kitchen counters running along the North and West walls, and a small table and chairs in the South-East corner. Next to the table are a couple of bins, and a door in the East wall which leads outside. Finally, there's a body lying on the floor. I'm going to make an educated guess and say that the last isn't an intentional design feature.",
+                                        connects=[],
+                                        connect_text="There's one doorway back into the living room, which Roger is currently standing in.",
+                                        inventory=[],
+                                        #objects=[body(), bins(), counter(), roger()]
+                                        objects=[body(), counter()]
+                                    )
 
 
 

@@ -16,11 +16,11 @@ print "I got the call an hour ago. Roger Truman woke up around 4:15 this morning
 raw_input("< Press ANY KEY to continue >")
 print "\nI'm first on scene. Roger answers the door with an oddly blank expression, and shows me straight through to the kitchen. A few quick glances around the living room get me a family photo - Roger himself, along with a young boy. I try to stop and ask, but he hurries me along. Looks like he's anxious to get this over with.\n"
 raw_input("< Press ANY KEY to continue >")
-print player.currentroom.intro_desc
+print "\n{}\n".format(player.currentroom.intro_desc)
 while player.is_alive and not player.victory:
     action = raw_input("> ")
     #f.writelines("> {}\n".format(action))
     action = clean_input(action)
     response = check_action(action, player)
-    print response
+    print "\n{}".format(response)
     #f.writelines("{}\n".format(response))
