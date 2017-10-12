@@ -5,8 +5,9 @@ from items import *
 #Generic classes for an object-----------------------------------
 
 class world_object(object):
-    def __init__(self, name, description, discovered, has_inv, inventory, state, use_item):
+    def __init__(self, name, true_name, description, discovered, has_inv, inventory, state, use_item):
         self.name = name
+        self.true_name = true_name
         self.description = description
         self.discovered = discovered
         self.has_inv = has_inv
@@ -19,84 +20,56 @@ class world_object(object):
         return "That doesn't work like that."
     def close(self, player):
         return "That doesn't work like that."
+    def look_desc(self, player):
+        for item in self.inventory:
+            item.discovered = True
+        return self.description
     def __str__(self):
         return "{}\n=====\n{}\nDiscovered: {}\nInventory: {}\nState: {}\n".format(self.name, self.description, self.discovered, self.inventory, self.state)
 
 #Specific objects   -----------------------------------
 
-class enddoor(world_object):
+class body(world_object):
     def __init__(self):
-        super(enddoor, self).__init__(name=["locked door", "door"],
-                                      description="A large wooden door, with a giant padlock on it.",
-                                      discovered=False,
-                                      has_inv=False,
-                                      inventory=[],
-                                      state="locked",
-                                      use_item=[])
+        super(body, self).__init__(name=["body", "corpse", "victim"],
+                                   true_name="body",
+                                   description="The body of a caucasian male, looks to be about 30 years old. He's lying on his back, clutching what appears to be a stab wound on his stomach with his right hand, and stretching upwards towards the back door with his left hand. Other than being dead, he looks remarkably unremarkable.",
+                                   discovered=False,
+                                   has_inv=True,
+                                   inventory=[stab_wound()],
+                                   state=["DNA", "FP"],
+                                   use_item=[fingerprint(), dna()])
     def modify_object(self, player, item_name):
         if self.discovered:
-            for possible_item in self.use_item:
-                if item_name == possible_item.name:
-                    if self.state == "locked":
-                        self.state = "unlocked"
-                        self.name.remove("locked door")
-                        self.name.append("unlocked door")
-                        return "You hear a click as the door unlocks."
-                    elif self.state == "unlocked":
-                        self.state = "locked"
-                        self.name.remove("unlocked door")
-                        self.name.append("locked door")
-                        return "You hear a click as the door locks."
-            return "Doesn't look like that works..."
+            if item_name in fingerprint().name:
+                return self.fingerprint_object(player)
+            elif item_name in dna().name:
+                return self.dna_object(player)
+            else:
+                return "Doesn't look like that works..."
         else:
-            return "Is there there one of those in the room? You should look around more and check."
-    def open(self, player):
-        if self.discovered:
-            if self.state == "locked":
-                return "You turn the handle and try pushing, pulling, shaking and shoving. Yep, definitely locked."
-            elif self.state == "unlocked":
-                player.victory = True
-                return "You open the door, and step through into the light..."
+            return "Is there there one of those in the room? I should look around first and check."
+    def fingerprint_object(self, player):
+        if "FP" in self.state:
+            for item in player.inventory:
+                if item.true_name == "Fingerprint Kit" and item.state == "Incomplete":
+                    return "I've got the ink required, but I can't find the card used to take the transfers. I wonder if I've got anything I can use instead..."
+                elif item.true_name == "Fingerprint Kit" and item.state == "Complete":
+                    self.state.remove("FP")
+                    player.evidence.append(victim_fingerprints())
+                    return "I smear the victim's fingers in ink, and press the fingers on at a time onto a notebook page."
         else:
-            return "Is there there one of those in the room? You should look around more and check."
+            return "I've already fingerprinted the victim."
+    def dna_object(self, player):
+        if "DNA" in self.state:
+            self.state.remove("DNA")
+            player.evidence.append(victim_dna())
+            return "I take out a swab from my kit, and rub it around the inside of the victim's mouth."
+        else:
+            return "I've already got DNA from the victim."
 
-class drawers(world_object):
+class counter(world_object):
     def __init__(self):
-        super(drawers, self).__init__(name=["drawers", "drawer", "chest of drawers"],
-                                      description="It's a small chest of drawers. Looks like there's only one drawer left - all the others have been removed.",
-                                      discovered=False,
-                                      has_inv=True,
-                                      inventory=[key()],
-                                      state="closed",
-                                      use_item=[])
-    def open(self, player):
-        if self.discovered:
-            if self.state == "closed":
-                item_list = ""
-                self.state = "open"
-                for item in self.inventory:
-                    item.discovered = True
-                    item.obtainable = True
-                    item_list += "\n -- {}".format(item.name.title())
-                if len(self.inventory) == 0:
-                    drawer_desc = " There's nothing inside."
-                else:
-                    drawer_desc = " Inside, you can see the following items:{}".format(item_list)
-                self.description = "It's a small chest of drawers, with it's only drawer hanging open.{}".format(drawer_desc)
-                return "You open the drawer.{}".format(drawer_desc)
-            else:
-                return "The drawer is already open."
-        else:
-            return "Is there there one of those in the room? You should look around more and check."
-    def close(self, player):
-        if self.discovered:
-            if self.state == "open":
-                self.state = "closed"
-                for item in self.inventory:
-                    item.obtainable = False
-                self.description = "It's a small chest of drawers. Looks like there's only one drawer left - all the others have been removed."
-                return "You close the drawer."
-            else:
-                return "The drawer is already closed."
-        else:
-            return "Is there there one of those in the room? You should look around more and check."
+        super(counter, self).__init__(name=["counter", "worktop", "counters", "kitchen counter", "kitchen counters"],
+                                      true_name="Kitchen Counter",
+                                      )

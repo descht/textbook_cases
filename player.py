@@ -18,16 +18,26 @@ replace_dict = [
 class Player(object):
     def __init__(self):
         self.inventory = [pen(), phone(), fingerprint(), dna(), notebook(), cigarettes(5), lighter()]
+        self.evidence = []
         self.is_alive = True
         self.victory = False
-        self.currentroom = startroom()
+        self.stage = 0
+        self.currentroom = kitchen()
     def print_inventory(self):
         if len(self.inventory) == 0:
-            return "You aren't carrying anything."
+            return "I'm not carrying anything."
         else:
-            inv_list = "You're carrying:\n"
+            inv_list = "With me I've got:\n"
             for item in self.inventory:
-                inv_list += " -- {}\n".format(item.true_name.title())
+                inv_list += "-- {}\n".format(item.true_name)
+            return inv_list
+    def print_evidence(self):
+        if len(self.evidence) == 0:
+            return "I've not discovered any evidence yet."
+        else:
+            inv_list = "The evidence I've collected so far:\n"
+            for item in self.evidence:
+                inv_list += "-- {}\n".format(item.true_name)
             return inv_list
 
 def clean_input(action):
@@ -74,23 +84,31 @@ def look_action(look_item, player):
         return player.currentroom.look_desc()
     elif look_item[0] == "inventory":
         return player.print_inventory()
+    elif look_item[0] == "evidence":
+        return player.print_evidence()
     else:
         look_item_full = ""
         for item in look_item:
             look_item_full += "{} ".format(item)
         look_item_full = look_item_full.strip()
 
-        if player.currentroom.name == look_item_full:
+        if look_item_full in player.currentroom.name:
             return player.currentroom.look_desc()
         for possible_item in player.currentroom.inventory:
-            if possible_item.name == look_item_full and possible_item.discovered:
-                return possible_item.description
+            if look_item_full in possible_item.name and possible_item.discovered:
+                return possible_item.look_desc(player)
         for possible_object in player.currentroom.objects:
             if look_item_full in possible_object.name and possible_object.discovered:
-                return possible_object.description
+                return possible_object.look_desc(player)
+            for possible_item in possible_object.inventory:
+                if look_item_full in possible_item.name and possible_item.discovered:
+                    return possible_item.look_desc(player)
         for possible_item in player.inventory:
-            if possible_item.name == look_item_full:
-                return possible_item.description
+            if look_item_full in possible_item.name:
+                return possible_item.look_desc(player)
+        for possible_evidence in player.evidence:
+            if look_item_full in possible_evidence.name:
+                return possible_evidence.look_desc(player)
         return "There's nothing to see."
 
 def use_action(use_list, player):
@@ -109,12 +127,13 @@ def use_action(use_list, player):
     use_object = use_object.strip()
 
     for possible_item in player.inventory:
-        if possible_item.name == use_item:
+        if use_item in possible_item.name:
             for possible_object in player.currentroom.objects:
                 if use_object in possible_object.name:
-                    print possible_object.discovered
-                    #print "You used the {} on the {}".format(use_item, use_object)
                     return possible_object.modify_object(player, use_item)
+            for possible_item2 in player.inventory:
+                if use_object in possible_item2.name:
+                    return possible_item2.modify_object(player, use_item)
     return "That doesn't do anything."
 
 def open_action(open_list, player):
