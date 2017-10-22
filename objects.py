@@ -37,7 +37,7 @@ class body(world_object):
                                     description="The body of a caucasian male, looks to be about 30 years old. He's lying on his back, clutching what appears to be a stab wound on his stomach with his right hand, and stretching upwards towards the back door with his left hand. Other than being dead, he looks remarkably unremarkable.",
                                     discovered=False,
                                     has_inv=True,
-                                    inventory=[stab_wound()],
+                                    inventory=[wound()],
                                     state=["DNA", "FP"],
                                     use_item=[fingerprint(), dna()]
                                 )
@@ -70,6 +70,26 @@ class body(world_object):
         else:
             return "I've already got DNA from the victim."
 
+class wound(world_object):
+    def __init__(self):
+        super(wound, self).__init__(
+            name=["wound", "stomach"],
+            true_name="Stomach Wound",
+            description="Carefully lifting the victims hand, the wound can be seen clearly. There's a single incision on the left side of his stomach, about an inch wide. The size and shape means it was most likely made by an average sized knife, the kind that's commonly found in kitchens throughout households across the country. Great.",
+            discovered=False,
+            has_inv=True,
+            inventory=[stab_wound()],
+            state="Unseen",
+            use_item=[]
+        )
+    def look_desc(self, player):
+        if self.state == "Unseen":
+            self.inventory = []
+            stab_wound().discovered = True
+            player.evidence.append(stab_wound())
+            self.state = "Seen"
+        return "{}\n".format(self.description)
+
 class counter(world_object):
     def __init__(self):
         super(counter, self).__init__(
@@ -78,7 +98,71 @@ class counter(world_object):
                                         description="The counters running against two walls of the kitchen are completely clear of all clutter - clearly Roger likes to keep his house in order. The only thing of note is a utensil holder, at the back of the counter against the wall.",
                                         discovered=False,
                                         has_inv=True,
-                                        inventory=[missing_knife()],
+                                        inventory=[utensil_holder()],
                                         state="",
                                         use_item=[]
                                     )
+
+class utensil_holder(world_object):
+    def __init__(self):
+        super(utensil_holder, self).__init__(
+            name=["utensil holder"],
+            true_name="Utensil Holder",
+            description="The utensil holder is a simple design - a long block of wood, with clearly defined slots for various wooden spoons, knives, stirrers, and other utensils I couldn't possibly name. There's only one thing missing - one of the slots, clearly intended for a large knife, is empty.",
+            discovered=False,
+            has_inv=True,
+            inventory=[missing_knife()],
+            state="Unseen",
+            use_item=[]
+        )
+    def look_desc(self, player):
+        if self.state == "Unseen":
+            self.inventory = []
+            missing_knife().discovered = True
+            player.evidence.append(missing_knife())
+            self.state = "Seen"
+        return "{}\n".format(self.description)
+
+class bins(world_object):
+    def __init__(self):
+        super(bins, self).__init__(
+            name=["bins", "kitchen bins", "bin", "kitchen bin"],
+            true_name="Kitchen Bins",
+            description="There are two bins, one for general waste and another for recycling - but both are completely empty. They must have been emptied recently too, because the bin bags haven't been replaced. There's also a gap behind one of the bins, where it's been pulled away from the wall slightly.",
+            discovered=False,
+            has_inv=True,
+            inventory=[behind_bins(), empty_bins()]
+            state="Unseen",
+            use_item=[]
+        )
+    def look_desc(self, player):
+        if self.state == "Unseen":
+            for item in self.inventory:
+                if item.true_name == "Empty Bins":
+                    self.inventory.remove(item)
+            empty_bins().discovered = True
+            player.evidence.append(empty_bins())
+            self.state = "Seen"
+        return "{}\n".format(self.description)
+
+class behind_bins(world_object):
+    def __init__(self):
+        super(behind_bins, self).__init__(
+            name=["behind bins", "behind bin"],
+            true_name="Behind Bins",
+            description="Peering behind the recycling bin, I see a smear of what looks like blood on the wall. Murder can  certainly be messy, but this seems too far from the body to be simple cast off.",
+            discovered=False,
+            has_inv=True,
+            inventory=[blood_smear()],
+            state="Unseen",
+            use_item=[]
+        )
+    def look_desc(self, player):
+        if self.state == "Unseen":
+            for item in self.inventory:
+                if item.true_name == "Blood Smear":
+                    self.inventory.remove(item)
+            blood_smear().discovered = True
+            player.evidence.append(blood_smear())
+            self.state = "Seen"
+        return "{}\n".format(self.description)

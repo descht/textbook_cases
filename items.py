@@ -190,44 +190,28 @@ class victim_dna(evidence):
 class missing_knife(evidence):
     def __init__(self):
         super(missing_knife, self).__init__(
-                                            name=["utensil holder", "missing knife", "empty knife slot"],
+                                            name=["missing knife", "empty knife slot"],
                                             true_name="Missing Knife from Kitchen",
-                                            state="Unseen",
-                                            description="An empty slot in the utensil holder, intended to hold a sharp knife. It might mean nothing, but it seems a little odd given how pristine the rest of the kitchen is.",
+                                            state="",
+                                            description="There appears to be a single knife missing from the kitchen. It might mean nothing, but it seems a little odd given how pristine the rest of the kitchen is.",
                                             discovered=False,
                                             obtainable=False,
                                             combines=knife_from_kitchen(),
                                             combo_text="A stab wound made by a regular kitchen knife, and a spot from which a kitchen knife is obviously missing. Not a very groundbreaking deduction, but the most likely answer at this point is that the victim was killed using a knife found on the scene, before the knife was removed somehow. This could also just be a coincidence, but to find out either way I really need to track down that knife."
                                         )
-    def look_desc(self, player):
-        if self.state == "Unseen":
-            self.state = "Seen"
-            player.evidence.append(self)
-            return "The utensil holder is a simple design - a long block of wood, with clearly defined slots for various wooden spoons, knives, stirrers, and other utensils I couldn't possibly name. There's only one thing missing - one of the slots, clearly intended for a large knife, is empty. It might mean nothing, but I'll make a note of it just in case.\n"
-        else:
-            return self.description
 
 class stab_wound(evidence):
     def __init__(self):
         super(stab_wound, self).__init__(
-                                            name=["wound", "stomach"],
+                                            name=["stab wound", "knife wound", "incision"],
                                             true_name="Stab Wound on Victim",
-                                            state="Unseen",
+                                            state="",
                                             description="The fatal wound on the victim. The wound only looks to be about an inch wide, meaning the murder weapon itself isn't too big - about the size of standard kitchen knife.",
                                             discovered=False,
                                             obtainable=False,
                                             combines=knife_from_kitchen(),
                                             combo_text="A stab wound made by a regular kitchen knife, and a spot from which a kitchen knife is obviously missing. Not a very groundbreaking deduction, but the most likely answer at this point is that the victim was killed using a knife found on the scene, before the knife was removed somehow. This could also just be a coincidence, but to find out either way I really need to track down that knife."
                                         )
-    def look_desc(self, player):
-        if self.state == "Unseen":
-            self.state = "Seen"
-            self.name.append("stab wound")
-            self.name.append("knife wound")
-            player.evidence.append(self)
-            return "I carefully lift the victims hand, and check the wound. There's a single wound on the left side of his stomach, about an inch wide. The size and shape means it was most likely made by an average sized knife, the kind that's commonly found in kitchens throughout households across the country. Great.\n"
-        else:
-            return self.description
 
 class knife_from_kitchen(evidence):
     def __init__(self):
@@ -238,6 +222,27 @@ class knife_from_kitchen(evidence):
                                                     description="The victim was stabbed, and the most likely weapon at the moment seems like one of the knives from the scene, which is currently missing. Did the murderer dispose of it?",
                                                     discovered=True,
                                                     obtainable=False,
-                                                    combines="",
                                                     combo_text=""
                                                 )
+
+class empty_bins(evidence):
+    def __init__(self):
+        super(bins, self).__init__(
+            name=["empty bin", "empty bins", "empty kitchen bins", "empty kitchen bin"],
+            true_name="Empty Kitchen Bins",
+            state="Unseen",
+            description="Two empty bins. There's also a small gap behind one of the bins ",
+            discovered=False,
+            obtainable=False,
+            combines="",
+            combo_text=""
+        )
+    def look_desc(self, player):
+        if self.state == "Unseen":
+            self.state = "Seen"
+            self.name.append("empty kitchen bins")
+            self.name.append("empty kitchen bin")
+            self.name.append("empty bins")
+            self.name.append("empty bin")
+            player.evidence.append(self)
+            return "There are two bins, one for general waste and another for recycling - but both are completely empty. They must have been emptied recently too, because the bin bags haven't been replaced. There's also a gap behind one of the bins, where it's pulled away from the wall."
