@@ -150,7 +150,7 @@ class behind_bins(world_object):
         super(behind_bins, self).__init__(
             name=["behind bins", "behind bin"],
             true_name="Behind Bins",
-            description="Peering behind the recycling bin, I see a smear of what looks like blood on the wall. Murder can  certainly be messy, but this seems too far from the body to be simple cast off.",
+            description="Peering behind the recycling bin, I see a smear of what looks like blood on the wall. Murder can certainly be messy, but this seems too far from the body to be simple cast off. It's also clearly been smudged at the edges - did someone try to clean up?",
             discovered=False,
             has_inv=True,
             inventory=[blood_smear()],

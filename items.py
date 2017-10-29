@@ -222,7 +222,8 @@ class knife_from_kitchen(evidence):
                                                     description="The victim was stabbed, and the most likely weapon at the moment seems like one of the knives from the scene, which is currently missing. Did the murderer dispose of it?",
                                                     discovered=True,
                                                     obtainable=False,
-                                                    combo_text=""
+                                                    combines=knife_disposed_of(),
+                                                    combo_text="The blood near the bin seems too far from the body, but it definitely could have come from the murder weapon. The kitchen knife is still missing - did the killer throw it in the bin?"
                                                 )
 
 class empty_bins(evidence):
@@ -230,19 +231,23 @@ class empty_bins(evidence):
         super(bins, self).__init__(
             name=["empty bin", "empty bins", "empty kitchen bins", "empty kitchen bin"],
             true_name="Empty Kitchen Bins",
-            state="Unseen",
-            description="Two empty bins. There's also a small gap behind one of the bins ",
+            state="",
+            description="The kitchen bins are both empty, and the bin bags haven't been replaced.",
             discovered=False,
             obtainable=False,
             combines="",
             combo_text=""
         )
-    def look_desc(self, player):
-        if self.state == "Unseen":
-            self.state = "Seen"
-            self.name.append("empty kitchen bins")
-            self.name.append("empty kitchen bin")
-            self.name.append("empty bins")
-            self.name.append("empty bin")
-            player.evidence.append(self)
-            return "There are two bins, one for general waste and another for recycling - but both are completely empty. They must have been emptied recently too, because the bin bags haven't been replaced. There's also a gap behind one of the bins, where it's pulled away from the wall."
+
+class blood_smear(evidence):
+    def __init__(self):
+        super(blood_smear, self).__init__(
+            name=["blood smear", "blood"],
+            true_name="Blood Smear",
+            state="",
+            description="A smear of blood found in the kitchen, behind the bins. It seems like someone attempted to clean this up as well.",
+            discovered=False,
+            obtainable=False,
+            combines=knife_disposed_of(),
+            combo_text="The blood near the bin seems too far from the body, but it definitely could have come from the murder weapon. The kitchen knife is still missing - did the killer throw it in the bin?"
+        )
