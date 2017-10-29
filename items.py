@@ -1,4 +1,5 @@
 """The definitions for all items found throughout the game."""
+from rooms import *
 
 #Generic classes for an item-----------------------------------
 class item(object):
@@ -228,16 +229,25 @@ class knife_from_kitchen(evidence):
 
 class empty_bins(evidence):
     def __init__(self):
-        super(bins, self).__init__(
+        super(empty_bins, self).__init__(
             name=["empty bin", "empty bins", "empty kitchen bins", "empty kitchen bin"],
             true_name="Empty Kitchen Bins",
             state="",
             description="The kitchen bins are both empty, and the bin bags haven't been replaced.",
             discovered=False,
             obtainable=False,
-            combines="",
-            combo_text=""
+            combines=knife_in_bin(),
+            combo_text="The blood appears to indicate the murder weapon was thrown in the bin, but both bins have been emptied. There's no sign of the bags here in the kitchen - where would the killer take them?"
         )
+    def compares(self, player, second_item):
+        if second_item.combines.true_name == self.combines.true_name and self.combines != -1:
+            player.evidence.remove(second_item)
+            player.evidence.remove(self)
+            player.evidence.append(self.combines)
+            player.currentroom.connects.append(outside())
+            return "{}\n".format(self.combo_text)
+        else:
+            return "Those two don't go together."
 
 class blood_smear(evidence):
     def __init__(self):
@@ -250,4 +260,39 @@ class blood_smear(evidence):
             obtainable=False,
             combines=knife_disposed_of(),
             combo_text="The blood near the bin seems too far from the body, but it definitely could have come from the murder weapon. The kitchen knife is still missing - did the killer throw it in the bin?"
+        )
+
+class knife_disposed_of(evidence):
+    def __init__(self):
+        super(knife_disposed_of, self).__init__(
+            name=["knife diposed of", "knife disposed", "knife has been disposed", "knife has been disposed of"],
+            true_name="Knife has been Disposed of?",
+            state="",
+            description="The missing kitchen knife is the most likely murder weapon at this point, and there's a bloody smear behind the kitchen bin - did the killer throw it inside?",
+            discovered=True,
+            obtainable=False,
+            combines=knife_in_bin(),
+            combo_text="The blood appears to indicate the murder weapon was thrown in the bin, but both bins have been emptied. There's no sign of the bags here in the kitchen - where would the killer take them?"
+        )
+    def compares(self, player, second_item):
+        if second_item.combines.true_name == self.combines.true_name and self.combines != -1:
+            player.evidence.remove(second_item)
+            player.evidence.remove(self)
+            player.evidence.append(self.combines)
+            player.currentroom.connects.append(outside())
+            return "{}\n".format(self.combo_text)
+        else:
+            return "Those two don't go together."
+
+class knife_in_bin(evidence):
+    def __init__(self):
+        super(knife_in_bin, self).__init__(
+            name=["knife in bin bag", "knife in missing bin bag"],
+            true_name="Knife in the Missing Bin Bag",
+            state="",
+            description="The missing knife was most likely thrown in one of the bin bags, and then the bags themselves were moved somewhere. But where?",
+            discovered=True,
+            obtainable=False,
+            combines=-1,
+            combo_text=""
         )

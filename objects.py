@@ -131,18 +131,18 @@ class bins(world_object):
             description="There are two bins, one for general waste and another for recycling - but both are completely empty. They must have been emptied recently too, because the bin bags haven't been replaced. There's also a gap behind one of the bins, where it's been pulled away from the wall slightly.",
             discovered=False,
             has_inv=True,
-            inventory=[behind_bins(), empty_bins()]
+            inventory=[behind_bins(), empty_bins()],
             state="Unseen",
             use_item=[]
         )
     def look_desc(self, player):
         if self.state == "Unseen":
             for item in self.inventory:
-                if item.true_name == "Empty Bins":
+                item.discovered=True
+                if item.true_name == "Empty Kitchen Bins":
                     self.inventory.remove(item)
-            empty_bins().discovered = True
-            player.evidence.append(empty_bins())
-            self.state = "Seen"
+                    player.evidence.append(item)
+                self.state = "Seen"
         return "{}\n".format(self.description)
 
 class behind_bins(world_object):

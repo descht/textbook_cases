@@ -45,15 +45,31 @@ class kitchen(room):
                                         connects=[],
                                         connect_text="There's one doorway back into the living room, which Roger is currently standing in.",
                                         inventory=[],
-                                        #objects=[body(), bins(), counter(), roger()]
-                                        objects=[body(), counter()]
+                                        objects=[body(), counter(), bins()]
                                     )
 
+class outside(room):
+    def __init__(self):
+        super(outside, self).__init__(
+            room_id=2,
+            name=["outside", "front of house"],
+            true_name="Outside Roger's House",
+            intro_desc="",
+            look_text="",
+            connects=[],
+            connect_text="",
+            inventory=[],
+            objects=[]
+        )
+    def modify_player(self, player):
+        kitchen().connects=[]
+        return "I push past Roger, straight through his living room, out the front door and to the kerb. If the murder weapon was thrown in the bin, and the bin bags are missing, then the next place I need to check is the black wheelie bin on the street.\n\nOnce outside, the sound of bin men clattering about in the distance becomes clear - luckily they have't got this far up the street yet. I flip open the black bin lid, and lift out the top bag."
 
 
 
 rooms = {
     "kitchen" : kitchen(),
+    "outside" : outside()
 }
 
 #print "Key" in rooms[2].items.name

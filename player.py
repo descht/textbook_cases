@@ -53,13 +53,25 @@ def clean_input(action):
 def move_action(dest, player):
     if len(dest) == 0:
         return "Where do you want to go?"
-    elif "{} {}".format(dest[0], dest[1]) in player.currentroom.connects:
-        player.currentroom = rooms["{} {}".format(dest[0], dest[1])]
-        print "\n--------------------------------------\n"
-        player.currentroom.modify_player(player)
-        return "{}\n\n".format(player.currentroom.intro_desc)
     else:
+        dest_room = ""
+        for word in dest:
+            dest_room += "{} ".format(word)
+        dest_room = dest_room.strip()
+        for possible_room in player.currentroom.connects:
+            if dest_room in possible_room.name:
+                player.currentroom = possible_room
+                print "\n--------------------------------------\n"
+                player.currentroom.modify_player(player)
+                return "{}\n\n".format(player.currentroom.intro_desc)
         return "Doesn't look like you can get there from here."
+    # elif "{} {}".format(dest[0], dest[1]) in player.currentroom.connects:
+    #     player.currentroom = rooms["{} {}".format(dest[0], dest[1])]
+    #     print "\n--------------------------------------\n"
+    #     player.currentroom.modify_player(player)
+    #     return "{}\n\n".format(player.currentroom.intro_desc)
+    # else:
+    #     return "Doesn't look like you can get there from here."
 
 def get_action(get_list, player):
     if len(get_list) == 0:
