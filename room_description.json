@@ -1,0 +1,18 @@
+{
+  "intro_text": {
+    "first_line": "I got the call an hour ago. Roger Truman woke up around 4:15 this morning and went downstairs to the kitchen to get a glass of water. Instead he found a body. He apparently has no clue who the victim is, how they came to be in his home - never mind how they ended up dead.\n\nI pull into the quiet street in the pouring rain. Roger's home is a little terraced house in a street full of identical copies. In these conditions I can't make out any of the buildings in detail, but my headlights pick out house numbers displayed in rough white paint on bins lining the street.\n\nI park the car, and check over my kit - I've got my fingerprinting and DNA kits, a notepad and pen, my mobile phone and a pack of cigarettes. Satisfied, I get out my car, hurry up the short narrow path to the front door, and ring the bell.\n",
+    "second_line": "I'm first on scene. Roger answers the door with an oddly blank expression, and shows me straight through to the kitchen. A few quick glances around the living room get me a family photo - Roger himself, along with a young boy. I try to stop and ask, but he hurries me along. Looks like he's anxious to get this over with.\n"
+  },
+  "room_text": {
+    "kitchen": {
+      "intro_text": "Roger's kitchen is reasonably sized - there's a handful of furniture and various kitchen appliances, and still enough floor space left over for two or three people to move around without getting in each others way. At least, not too much.",
+      "look_text": "There are two kitchen counters running along the North and West walls, and a small table and chairs in the South-East corner. Next to the table are a couple of bins, and a door in the East wall which leads outside. Finally, there's a body lying on the floor. I'm going to make an educated guess and say that the last isn't an intentional design feature.",
+      "connect_text": "There's one doorway back into the living room, which Roger is currently standing in."
+    },
+    "outside": {
+      "intro_text": "",
+      "look_text": "",
+      "connect_text": ""
+    }
+  }
+}

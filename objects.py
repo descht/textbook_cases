@@ -2,8 +2,8 @@
 
 from items import *
 
-#Generic classes for an object-----------------------------------
 
+# Generic classes for an object-----------------------------------
 class world_object(object):
     def __init__(self, name, true_name, description, discovered, has_inv, inventory, state, use_item):
         self.name = name
@@ -14,21 +14,26 @@ class world_object(object):
         self.inventory = inventory
         self.state = state
         self.use_item = use_item
-    def modify_object(self, player):
+
+    def modify_object(self, player, item_name):
         return "That doesn't work like that."
+
     def open(self, player):
         return "That doesn't work like that."
+
     def close(self, player):
         return "That doesn't work like that."
+
     def look_desc(self, player):
         for item in self.inventory:
             item.discovered = True
         return "{}\n".format(self.description)
+
     def __str__(self):
         return "{}\n=====\n{}\nDiscovered: {}\nInventory: {}\nState: {}\n".format(self.name, self.description, self.discovered, self.inventory, self.state)
 
-#Specific objects   -----------------------------------
 
+# Specific objects   -----------------------------------
 class body(world_object):
     def __init__(self):
         super(body, self).__init__(
@@ -41,6 +46,7 @@ class body(world_object):
                                     state=["DNA", "FP"],
                                     use_item=[fingerprint(), dna()]
                                 )
+
     def modify_object(self, player, item_name):
         if self.discovered:
             if item_name in fingerprint().name:
@@ -51,6 +57,7 @@ class body(world_object):
                 return "Doesn't look like that works..."
         else:
             return "Is there there one of those in the room? I should look around first and check."
+
     def fingerprint_object(self, player):
         if "FP" in self.state:
             for item in player.inventory:
@@ -62,6 +69,7 @@ class body(world_object):
                     return "I smear the victim's fingers in ink, and press the fingers on at a time onto a notebook page."
         else:
             return "I've already fingerprinted the victim."
+
     def dna_object(self, player):
         if "DNA" in self.state:
             self.state.remove("DNA")
@@ -69,6 +77,7 @@ class body(world_object):
             return "I take out a swab from my kit, and rub it around the inside of the victim's mouth."
         else:
             return "I've already got DNA from the victim."
+
 
 class wound(world_object):
     def __init__(self):
@@ -82,6 +91,7 @@ class wound(world_object):
             state="Unseen",
             use_item=[]
         )
+
     def look_desc(self, player):
         if self.state == "Unseen":
             self.inventory = []
@@ -89,6 +99,7 @@ class wound(world_object):
             player.evidence.append(stab_wound())
             self.state = "Seen"
         return "{}\n".format(self.description)
+
 
 class counter(world_object):
     def __init__(self):
@@ -103,6 +114,7 @@ class counter(world_object):
                                         use_item=[]
                                     )
 
+
 class utensil_holder(world_object):
     def __init__(self):
         super(utensil_holder, self).__init__(
@@ -115,6 +127,7 @@ class utensil_holder(world_object):
             state="Unseen",
             use_item=[]
         )
+
     def look_desc(self, player):
         if self.state == "Unseen":
             self.inventory = []
@@ -122,6 +135,7 @@ class utensil_holder(world_object):
             player.evidence.append(missing_knife())
             self.state = "Seen"
         return "{}\n".format(self.description)
+
 
 class bins(world_object):
     def __init__(self):
@@ -135,6 +149,7 @@ class bins(world_object):
             state="Unseen",
             use_item=[]
         )
+
     def look_desc(self, player):
         if self.state == "Unseen":
             for item in self.inventory:
@@ -144,6 +159,7 @@ class bins(world_object):
                     player.evidence.append(item)
                 self.state = "Seen"
         return "{}\n".format(self.description)
+
 
 class behind_bins(world_object):
     def __init__(self):
@@ -157,6 +173,7 @@ class behind_bins(world_object):
             state="Unseen",
             use_item=[]
         )
+
     def look_desc(self, player):
         if self.state == "Unseen":
             for item in self.inventory:

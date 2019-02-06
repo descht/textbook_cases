@@ -1,7 +1,8 @@
 """The definitions for all items found throughout the game."""
-from rooms import *
+# from rooms import *
 
-#Generic classes for an item-----------------------------------
+
+# Generic classes for an item-----------------------------------
 class item(object):
     def __init__(self, name, true_name, state, description, discovered, obtainable):
         self.name = name
@@ -10,20 +11,26 @@ class item(object):
         self.description = description
         self.discovered = discovered
         self.obtainable = obtainable
+
     def use_item(self):
         return "That can't be used like that."
+
     def modify_object(self):
         return "That doesn't work like that."
+
     def look_desc(self, player):
         return "{}\n".format(self.description)
+
     def __str__(self):
         return "{}\n=====\n{}\nDiscovered: {}\nObtainable: {}\n".format(self.name, self.description, self.discovered, self.obtainable)
+
 
 class evidence(item):
     def __init__(self, name, true_name, state, description, discovered, obtainable, combines, combo_text):
         self.combines = combines
         self.combo_text = combo_text
         super(evidence, self).__init__(name, true_name, state, description, discovered, obtainable)
+
     def compares(self, player, second_item):
         if second_item.combines.true_name == self.combines.true_name and self.combines != -1:
             player.evidence.remove(second_item)
@@ -34,7 +41,7 @@ class evidence(item):
             return "Those two don't go together."
 
 
-#Specific items   --------------------------------------------
+# Specific items   --------------------------------------------
 class notebook(item):
     def __init__(self):
         self.contents = {}
@@ -46,10 +53,13 @@ class notebook(item):
                                         discovered=True,
                                         obtainable=True
                                     )
+
     def add_entry(self, new_key, new_entry):
         self.contents[new_key] = new_entry
+
     def remove_entry(self, remove_key):
         del self.contents[remove_key]
+
     def use_item(self):
         notebook_desc = ""
         for entry in self.contents.values():
@@ -68,6 +78,7 @@ class pen(item):
                                     obtainable=True
                                 )
 
+
 class phone(item):
     def __init__(self):
         self.numbers = {}
@@ -79,24 +90,27 @@ class phone(item):
                                     discovered=True,
                                     obtainable=True
                                 )
+
     def modify_object(self, new_contact):
         self.numbers[new_contact] = 0
+
     def use_item(self):
         if len(self.numbers) == 0:
             return "I don't have anyones numbers yet - at least, none that are in any way relevant to this case"
         else:
-            print "Who shall I ring?"
+            print("Who shall I ring?")
             for key in self.numbers.keys():
-                print "-- {}".format(key.title())
-                print "Cancel"
-                chosen = raw_input("> ").lower()
+                print("-- {}".format(key.title()))
+                print("Cancel")
+                chosen = input("> ").lower()
                 if chosen == "cancel":
                     return "Guess there's no one I need to speak to now."
-            else:
-                for key in self.numbers.keys():
-                    if key == chosen:
-                        return "I dial the number for {}.".format(chosen)
-                    return "I don't know that number."
+                else:
+                    for key in self.numbers.keys():
+                        if key == chosen:
+                            return "I dial the number for {}.".format(chosen)
+                        return "I don't know that number."
+
 
 class fingerprint(item):
     def __init__(self):
@@ -108,6 +122,7 @@ class fingerprint(item):
                                             discovered=True,
                                             obtainable=True
                                         )
+
     def modify_object(self, player, use_item):
         if use_item in notebook().name:
             if self.state == "Incomplete":
@@ -131,6 +146,7 @@ class dna(item):
                                     obtainable=True
                                 )
 
+
 class cigarettes(item):
     def __init__(self, amount):
         self.amount = amount
@@ -142,12 +158,14 @@ class cigarettes(item):
                                             discovered=True,
                                             obtainable=True
                                         )
+
     def use_item(self):
         if self.amount == 0:
             return "Damn, I'm out. I'll have to remember to pick some up later."
         else:
             self.amount -= 1
             return "I pull out my lighter, and light a cigarette.\nSomething something text about getting a hint."
+
 
 class lighter(item):
     def __init__(self):
@@ -160,8 +178,8 @@ class lighter(item):
                                         obtainable=True
                                     )
 
-#Evidence -----------------------
 
+# Evidence -----------------------
 class victim_fingerprints(evidence):
     def __init__(self):
         super(victim_fingerprints, self).__init__(
@@ -174,6 +192,7 @@ class victim_fingerprints(evidence):
                                                     combines=-1,
                                                     combo_text=""
                                                 )
+
 
 class victim_dna(evidence):
     def __init__(self):
@@ -188,6 +207,7 @@ class victim_dna(evidence):
                                             combo_text=""
                                         )
 
+
 class missing_knife(evidence):
     def __init__(self):
         super(missing_knife, self).__init__(
@@ -200,6 +220,7 @@ class missing_knife(evidence):
                                             combines=knife_from_kitchen(),
                                             combo_text="A stab wound made by a regular kitchen knife, and a spot from which a kitchen knife is obviously missing. Not a very groundbreaking deduction, but the most likely answer at this point is that the victim was killed using a knife found on the scene, before the knife was removed somehow. This could also just be a coincidence, but to find out either way I really need to track down that knife."
                                         )
+
 
 class stab_wound(evidence):
     def __init__(self):
@@ -214,6 +235,7 @@ class stab_wound(evidence):
                                             combo_text="A stab wound made by a regular kitchen knife, and a spot from which a kitchen knife is obviously missing. Not a very groundbreaking deduction, but the most likely answer at this point is that the victim was killed using a knife found on the scene, before the knife was removed somehow. This could also just be a coincidence, but to find out either way I really need to track down that knife."
                                         )
 
+
 class knife_from_kitchen(evidence):
     def __init__(self):
         super(knife_from_kitchen, self).__init__(
@@ -227,6 +249,7 @@ class knife_from_kitchen(evidence):
                                                     combo_text="The blood near the bin seems too far from the body, but it definitely could have come from the murder weapon. The kitchen knife is still missing - did the killer throw it in the bin?"
                                                 )
 
+
 class empty_bins(evidence):
     def __init__(self):
         super(empty_bins, self).__init__(
@@ -239,15 +262,18 @@ class empty_bins(evidence):
             combines=knife_in_bin(),
             combo_text="The blood appears to indicate the murder weapon was thrown in the bin, but both bins have been emptied. There's no sign of the bags here in the kitchen - where would the killer take them?"
         )
+
     def compares(self, player, second_item):
         if second_item.combines.true_name == self.combines.true_name and self.combines != -1:
             player.evidence.remove(second_item)
             player.evidence.remove(self)
             player.evidence.append(self.combines)
-            player.currentroom.connects.append(outside())
+            import rooms
+            player.currentroom.connects.append(rooms.Outside())
             return "{}\n".format(self.combo_text)
         else:
             return "Those two don't go together."
+
 
 class blood_smear(evidence):
     def __init__(self):
@@ -262,10 +288,11 @@ class blood_smear(evidence):
             combo_text="The blood near the bin seems too far from the body, but it definitely could have come from the murder weapon. The kitchen knife is still missing - did the killer throw it in the bin?"
         )
 
+
 class knife_disposed_of(evidence):
     def __init__(self):
         super(knife_disposed_of, self).__init__(
-            name=["knife diposed of", "knife disposed", "knife has been disposed", "knife has been disposed of"],
+            name=["knife disposed of", "knife disposed", "knife has been disposed", "knife has been disposed of"],
             true_name="Knife has been Disposed of?",
             state="",
             description="The missing kitchen knife is the most likely murder weapon at this point, and there's a bloody smear behind the kitchen bin - did the killer throw it inside?",
@@ -274,15 +301,18 @@ class knife_disposed_of(evidence):
             combines=knife_in_bin(),
             combo_text="The blood appears to indicate the murder weapon was thrown in the bin, but both bins have been emptied. There's no sign of the bags here in the kitchen - where would the killer take them?"
         )
+
     def compares(self, player, second_item):
         if second_item.combines.true_name == self.combines.true_name and self.combines != -1:
             player.evidence.remove(second_item)
             player.evidence.remove(self)
             player.evidence.append(self.combines)
-            player.currentroom.connects.append(outside())
+            import rooms
+            player.currentroom.connects.append(rooms.Outside())
             return "{}\n".format(self.combo_text)
         else:
             return "Those two don't go together."
+
 
 class knife_in_bin(evidence):
     def __init__(self):
@@ -296,3 +326,4 @@ class knife_in_bin(evidence):
             combines=-1,
             combo_text=""
         )
+

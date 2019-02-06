@@ -1,6 +1,6 @@
 """The definition for the player"""
 from rooms import *
-import os
+
 
 replace_dict = [
     [" at ", " "],
@@ -19,14 +19,16 @@ replace_dict = [
     ["look around", "look"]
 ]
 
+
 class Player(object):
     def __init__(self):
         self.inventory = [pen(), phone(), fingerprint(), dna(), notebook(), cigarettes(5), lighter()]
-        self.evidence = []
+        self.evidence = [empty_bins(), knife_disposed_of()]
         self.is_alive = True
         self.victory = False
         self.stage = 0
         self.currentroom = kitchen()
+
     def print_inventory(self):
         if len(self.inventory) == 0:
             return "I'm not carrying anything."
@@ -35,6 +37,7 @@ class Player(object):
             for item in self.inventory:
                 inv_list += "-- {}\n".format(item.true_name)
             return inv_list
+
     def print_evidence(self):
         if len(self.evidence) == 0:
             return "I've not discovered any evidence yet."
@@ -44,11 +47,13 @@ class Player(object):
                 inv_list += "-- {}\n".format(item.true_name)
             return inv_list
 
+
 def clean_input(action):
     action = action.lower()
     for word_pair in replace_dict:
         action = action.replace(word_pair[0], word_pair[1])
     return action
+
 
 def move_action(dest, player):
     if len(dest) == 0:
@@ -61,8 +66,8 @@ def move_action(dest, player):
         for possible_room in player.currentroom.connects:
             if dest_room in possible_room.name:
                 player.currentroom = possible_room
-                print "\n--------------------------------------\n"
                 player.currentroom.modify_player(player)
+                print("\n--------------------------------------\n")
                 return "{}\n\n".format(player.currentroom.intro_desc)
         return "Doesn't look like you can get there from here."
     # elif "{} {}".format(dest[0], dest[1]) in player.currentroom.connects:
@@ -72,6 +77,7 @@ def move_action(dest, player):
     #     return "{}\n\n".format(player.currentroom.intro_desc)
     # else:
     #     return "Doesn't look like you can get there from here."
+
 
 def get_action(get_list, player):
     if len(get_list) == 0:
@@ -94,6 +100,7 @@ def get_action(get_list, player):
                     return "You picked up the {}".format(get_item)
 
         return "Looks like that item isn't here"
+
 
 def look_action(look_item, player):
     if len(look_item) == 0 or (len(look_item) == 1 and look_item[0] == "room"):
@@ -127,6 +134,7 @@ def look_action(look_item, player):
                 return possible_evidence.look_desc(player)
         return "There's nothing to see."
 
+
 def use_action(use_list, player):
     try:
         split_index = use_list.index("on")
@@ -152,6 +160,7 @@ def use_action(use_list, player):
                     return possible_item2.modify_object(player, use_item)
     return "That doesn't do anything."
 
+
 def open_action(open_list, player):
     if len(open_list) == 0:
         return "What do you want to try and open?"
@@ -165,6 +174,7 @@ def open_action(open_list, player):
                 return possible_object.open(player)
         return "Doesn't look like theres one of those around."
 
+
 def close_action(close_list, player):
     if len(close_list) == 0:
         return "What do you want to try and close?"
@@ -177,6 +187,7 @@ def close_action(close_list, player):
             if close_item in possible_object.name:
                 return possible_object.close(player)
         return "Doesn't look like theres one of those around."
+
 
 def compare_action(compare_list, player):
     try:
@@ -201,6 +212,7 @@ def compare_action(compare_list, player):
                     return possible_item.compares(player, possible_item2)
             return "Doesn't look like I have that to compare against."
     return "Doesn't look like I have that to compare."
+
 
 def check_action(action, player):
     action = action.split()
