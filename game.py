@@ -13,8 +13,6 @@ player = Player()
 
 now = time.strftime("%Y%m%d%H%M%S")
 
-SCREEN_WIDTH = 1000
-SCREEN_HEIGHT = 600
 RAIN_COLOUR = GREY
 
 pygame.init()
@@ -27,9 +25,9 @@ pygame.display.set_caption('Textbook Mysteries')
 game_icon = pygame.image.load('magnifying_glass.png')
 pygame.display.set_icon(game_icon)
 
-pygame.mixer.music.load("{}/NoirJazz_MH_V2_010219.mp3".format(music_folder))
-pygame.mixer.music.set_volume(0.8)
-pygame.mixer.music.play(-1)
+# pygame.mixer.music.load("{}/NoirJazz_MH_V2_010219.mp3".format(music_folder))
+# pygame.mixer.music.set_volume(0.8)
+# pygame.mixer.music.play(-1)
 
 
 channel1 = pygame.mixer.Channel(1)
@@ -50,15 +48,32 @@ for i in range(200):
     y = random.randrange(-10, SCREEN_HEIGHT + 10)
     raindrops.append([[x, y], y_speed])
 
-timer = 0
+game_phase = -1
+intro_phase = 0
+buffer = ""
+response = ""
 
 while not done:
+    timer = pygame.time.get_ticks() / 1000
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             done = True
         elif event.type == pygame.KEYDOWN:
             if event.key == pygame.K_ESCAPE:
                 done = True
+            elif game_phase == 0:
+                game_phase = 1
+            elif game_phase > 0:
+                if intro_phase < 2:
+                    intro_phase += 1
+                else:
+                    if event.key not in (pygame.K_KP_ENTER, pygame.K_RETURN):
+                        buffer = update_buffer(buffer, event)
+                    else:
+                        action = clean_input(buffer)
+                        response = check_action(action, player)
+                        buffer = ""
+                # print(input_text)
 
     screen.fill(BLACK)
 
@@ -76,9 +91,27 @@ while not done:
             raindrops[i][0][1] = y
             raindrops[i][1] = new_speed
 
-    print_to_screen("SLUG CITY", MAIN_FONT, 24, WHITE, screen, (SCREEN_WIDTH/2, SCREEN_HEIGHT/2 - 20), True, 4, 8, 2)
-    print_to_screen("PRESENTS", MAIN_FONT, 12, WHITE, screen, (SCREEN_WIDTH/2, SCREEN_HEIGHT/2 + 20), True, 4, 8, 2)
-    print_to_screen("TEXTBOOK MYSTERIES", MAIN_FONT, 36, WHITE, screen, (SCREEN_WIDTH/2, SCREEN_HEIGHT/2), True, 12, 18, 4)
+    if game_phase < 1:
+        if timer < 18:
+            temp_print_to_screen("SLUG CITY", MAIN_FONT, 24, WHITE, screen, (SCREEN_WIDTH/2, SCREEN_HEIGHT/2 - 20), True, 4, 8, 2)
+            temp_print_to_screen("PRESENTS", MAIN_FONT, 12, WHITE, screen, (SCREEN_WIDTH/2, SCREEN_HEIGHT/2 + 20), True, 4, 8, 2)
+            temp_print_to_screen("TEXTBOOK MYSTERIES", MAIN_FONT, 36, WHITE, screen, (SCREEN_WIDTH/2, SCREEN_HEIGHT/2), True, 12, 18, 4)
+        else:
+            print_to_screen("TEXTBOOK MYSTERIES", MAIN_FONT, 36, WHITE, screen, (SCREEN_WIDTH/2, SCREEN_HEIGHT/2), True)
+            print_to_screen("Press any key to start", MAIN_FONT, 12, WHITE, screen, (SCREEN_WIDTH/2, SCREEN_HEIGHT/2 + 40), True)
+            game_phase = 0
+    else:
+        if intro_phase == 0:
+            print_to_screen(room_text["intro_text"]["first_line"], MAIN_FONT, 12, WHITE, screen, (10, 10), False)
+            print_to_screen("< Press ANY KEY to continue >", MAIN_FONT, 16, GREEN, screen, (10, SCREEN_HEIGHT - 25), False)
+        elif intro_phase == 1:
+            print_to_screen(room_text["intro_text"]["second_line"], MAIN_FONT, 12, WHITE, screen, (10, 10), False)
+            print_to_screen("< Press ANY KEY to continue >", MAIN_FONT, 16, GREEN, screen, (10, SCREEN_HEIGHT - 25), False)
+        else:
+            print_to_screen(player.currentroom.intro_desc, MAIN_FONT, 12, WHITE, screen, (10, 10), False)
+            print_to_screen("> " + buffer, MAIN_FONT, 16, GREEN, screen, (10, SCREEN_HEIGHT - 25), False)
+            if response:
+                print_to_screen(response, MAIN_FONT, 12, GREEN, screen, (10, SCREEN_HEIGHT - 200), False)
 
     pygame.display.flip()
     clock.tick(60)
