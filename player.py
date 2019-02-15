@@ -203,7 +203,7 @@ def compare_action(compare_list, player):
             compare2 += "{} ".format(compare_list[i])
     compare1 = compare1.strip()
     compare2 = compare2.strip()
-    #print "evidence 1: <{}>\nevidence 2: <{}>".format(compare1, compare2)
+    # print "evidence 1: <{}>\nevidence 2: <{}>".format(compare1, compare2)
 
     for possible_item in player.evidence:
         if compare1 in possible_item.name:
