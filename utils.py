@@ -12,11 +12,38 @@ BLUE = (0, 0, 255)
 SCREEN_WIDTH = 1000
 SCREEN_HEIGHT = 600
 
+MAIN_FONT = "8-bit pusab.ttf"
+
 ACCEPTED = string.ascii_letters+string.digits+string.punctuation+" "
 
 font_folder = "fonts"
 music_folder = "music"
 sounds_folder = "sounds"
+
+
+class PauseScreen(object):
+    def __init__(self, screen, cursor):
+        self.screen = screen
+        self.cursor = cursor
+
+    def display(self):
+        pygame.draw.rect(self.screen, GREY, [50, 50, SCREEN_WIDTH - 100, SCREEN_HEIGHT - 100])
+        print_to_screen("<               >", MAIN_FONT, 12, BLACK, self.screen, (SCREEN_WIDTH/2, self.cursor), True)
+        print_to_screen("PAUSED", MAIN_FONT, 24, BLACK, self.screen, (SCREEN_WIDTH/2, 100), True)
+        print_to_screen("Resume", MAIN_FONT, 12, BLACK, self.screen, (SCREEN_WIDTH/2, 160), True)
+        print_to_screen("Sound", MAIN_FONT, 12, BLACK, self.screen, (SCREEN_WIDTH/2, 200), True)
+        print_to_screen("Settings", MAIN_FONT, 12, BLACK, self.screen, (SCREEN_WIDTH/2, 240), True)
+        print_to_screen("Exit", MAIN_FONT, 12, BLACK, self.screen, (SCREEN_WIDTH/2, 280), True)
+
+    def update(self, direction):
+        print(direction)
+        if direction == pygame.K_ESCAPE:
+            pygame.mixer.unpause()
+            pause
+        if direction == pygame.K_DOWN or direction == pygame.K_s:
+            self.cursor = self.cursor + 40
+            if self.cursor > 280:
+                self.cursor = 160
 
 
 def load_descriptions_file(file_name):
@@ -42,7 +69,11 @@ def render_text(text, font, size, colour, screen_pos, centered):
 
 
 def temp_print_to_screen(text, font, size, colour, screen, screen_pos, centered, fade_in_start, fade_out_start, fade_time):
-    text_rect, text_surface = render_text(text, font, size, colour, screen_pos, centered)
+    if font is not None:
+        text_rect, text_surface = render_text(text, font, size, colour, screen_pos, centered)
+    else:
+        text_surface = text
+        text_rect = text_surface.get_rect(center=screen_pos)
 
     fade_surf = pygame.Surface((text_rect.width, text_rect.height))
 
@@ -68,21 +99,23 @@ def print_to_screen(text, font, size, colour, screen, screen_pos, centered):
     formatted_lines = []
     font_type = pygame.font.Font("{}/{}".format(font_folder, font), size)
     for line in lines:
-        words = line.split(" ")
-        formatted_line = ""
-        for word in words:
-            test_line = formatted_line + word + " "
-            if font_type.size(test_line)[0] < SCREEN_WIDTH - 20:
-                formatted_line = test_line
-            else:
-                formatted_lines.append(formatted_line)
-                formatted_line = word + " "
-        formatted_lines.append(formatted_line)
-        formatted_lines.append(" ")
+        if line == " ":
+            formatted_lines.append(" ")
+        else:
+            words = line.split(" ")
+            formatted_line = ""
+            for word in words:
+                test_line = formatted_line + word + " "
+                if font_type.size(test_line)[0] < SCREEN_WIDTH - 20:
+                    formatted_line = test_line
+                else:
+                    formatted_lines.append(formatted_line)
+                    formatted_line = word + " "
+            formatted_lines.append(formatted_line)
+            # formatted_lines.append(" ")
 
     for line in range(len(formatted_lines)):
         text_rect, text_surface = render_text(formatted_lines[line], font, size, colour, (screen_pos[0], screen_pos[1]+(line*size)+(15*line)), centered)
-
         screen.blit(text_surface, text_rect)
 
     return 0

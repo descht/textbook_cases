@@ -25,9 +25,9 @@ pygame.display.set_caption('Textbook Mysteries')
 game_icon = pygame.image.load('magnifying_glass.png')
 pygame.display.set_icon(game_icon)
 
-pygame.mixer.music.load("{}/NoirJazz_MH_V2_010219.mp3".format(music_folder))
-pygame.mixer.music.set_volume(0.8)
-pygame.mixer.music.play(-1)
+# pygame.mixer.music.load("{}/NoirJazz_MH_V2_010219.mp3".format(music_folder))
+# pygame.mixer.music.set_volume(0.8)
+# pygame.mixer.music.play(-1)
 
 
 channel1 = pygame.mixer.Channel(1)
@@ -37,6 +37,9 @@ channel1.play(game_sound, loops=-1)
 MAIN_FONT = "8-bit pusab.ttf"
 red_light = pygame.image.load("red_siren.png")
 blue_light = pygame.image.load("blue_siren.png")
+
+logo = pygame.image.load("sc_logo_white_v3.png")
+logo_scaled = pygame.transform.rotozoom(logo, 0, 0.25)
 k = 0
 
 clock = pygame.time.Clock()
@@ -51,7 +54,10 @@ for i in range(200):
     y = random.randrange(-10, SCREEN_HEIGHT + 10)
     raindrops.append([[x, y], y_speed])
 
+pause_screen = PauseScreen(screen, 160)
+
 game_phase = 1
+paused = False
 intro_phase = 0
 buffer = ""
 response = ""
@@ -62,14 +68,17 @@ while not done and player.is_alive:
         if event.type == pygame.QUIT:
             done = True
         elif event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_ESCAPE:
-                done = True
+            if paused:
+                pause_screen.update_cursor(event.key)
             elif game_phase == 0:
                 game_phase = 1
             elif game_phase > 0:
                 if intro_phase < 2:
                     intro_phase += 1
-                else:
+                elif event.key == pygame.K_ESCAPE:
+                    if not paused:
+                        paused = True
+                elif not paused:
                     if event.key not in (pygame.K_KP_ENTER, pygame.K_RETURN):
                         buffer = update_buffer(buffer, event)
                     else:
@@ -82,9 +91,9 @@ while not done and player.is_alive:
 
     for i in range(len(raindrops)):
         pygame.draw.line(screen, RAIN_COLOUR, raindrops[i][0], (raindrops[i][0][0] - x_speed/5, raindrops[i][0][1] + raindrops[i][1]/5))
-
-        raindrops[i][0][0] -= x_speed
-        raindrops[i][0][1] += raindrops[i][1]
+        if not paused:
+            raindrops[i][0][0] -= x_speed
+            raindrops[i][0][1] += raindrops[i][1]
 
         if raindrops[i][0][1] > (SCREEN_HEIGHT + 10):
             y = random.randrange(-50, -10)
@@ -94,26 +103,19 @@ while not done and player.is_alive:
             raindrops[i][0][1] = y
             raindrops[i][1] = new_speed
 
-    # timer = pygame.time.get_ticks() // 1000
-    # if timer % 2 == 0:
-    #     k = (k + 1) % 2
-    #
-    # if k == 0:
-    #     screen.blit(red_light, (50, SCREEN_HEIGHT - 200))
-    # else:
-    #     screen.blit(blue_light, (250, SCREEN_HEIGHT - 200))
-
-    if game_phase < 1:
+    if -2 < game_phase < 1:
         if timer < 18:
-            temp_print_to_screen("SLUG CITY", MAIN_FONT, 24, WHITE, screen, (SCREEN_WIDTH/2, SCREEN_HEIGHT/2 - 20), True, 4, 8, 2)
-            temp_print_to_screen("PRESENTS", MAIN_FONT, 12, WHITE, screen, (SCREEN_WIDTH/2, SCREEN_HEIGHT/2 + 20), True, 4, 8, 2)
+            temp_print_to_screen(logo_scaled, None, 24, WHITE, screen, (SCREEN_WIDTH/2, SCREEN_HEIGHT/2 - 80), True, 4, 8, 2)
+            temp_print_to_screen("SLUG CITY", MAIN_FONT, 24, WHITE, screen, (SCREEN_WIDTH/2, SCREEN_HEIGHT/2), True, 4, 8, 2)
+            temp_print_to_screen("PRESENTS", MAIN_FONT, 12, WHITE, screen, (SCREEN_WIDTH/2, SCREEN_HEIGHT/2 + 40), True, 4, 8, 2)
             temp_print_to_screen("TEXTBOOK MYSTERIES", MAIN_FONT, 36, WHITE, screen, (SCREEN_WIDTH/2, SCREEN_HEIGHT/2), True, 12, 18, 4)
         else:
             print_to_screen("TEXTBOOK MYSTERIES", MAIN_FONT, 36, WHITE, screen, (SCREEN_WIDTH/2, SCREEN_HEIGHT/2), True)
             print_to_screen("Press any key to start", MAIN_FONT, 12, WHITE, screen, (SCREEN_WIDTH/2, SCREEN_HEIGHT/2 + 40), True)
             game_phase = 0
     # elif game_phase == -2:
-    #     print_to_screen("Help text goes here", MAIN_FONT, 12, WHITE, screen, (10, 10), False)
+    #     print_to_screen("PAUSED", MAIN_FONT, 24, WHITE, screen, (SCREEN_WIDTH/2, 30), True)
+    #     print_to_screen("Pause options", MAIN_FONT, 12, WHITE, screen, (SCREEN_WIDTH/2, 60), True)
     # elif game_phase == -3:
     #     print_to_screen("NOTEBOOK", MAIN_FONT, 24, WHITE, screen, (SCREEN_WIDTH/2, 30), True)
     #     print_to_screen("Notebook text goes here", MAIN_FONT, 12, WHITE, screen, (10, 60), False)
@@ -129,6 +131,10 @@ while not done and player.is_alive:
             print_to_screen("> " + buffer, MAIN_FONT, 16, GREEN, screen, (10, SCREEN_HEIGHT - 25), False)
             if response:
                 print_to_screen(response, MAIN_FONT, 12, GREEN, screen, (10, SCREEN_HEIGHT - 400), False)
+
+    if paused:
+        pause_screen.display()
+
 
     pygame.display.flip()
     clock.tick(60)

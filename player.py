@@ -1,6 +1,7 @@
 """The definition for the player"""
 from rooms import *
 
+contents = load_descriptions_file("room_description.json")
 
 replace_dict = [
     [" at ", " "],
@@ -23,7 +24,7 @@ replace_dict = [
 class Player(object):
     def __init__(self):
         self.inventory = [pen(), phone(), fingerprint(), dna(), notebook(), cigarettes(5), lighter()]
-        self.evidence = [empty_bins(), knife_disposed_of()]
+        self.evidence = []
         self.is_alive = True
         self.victory = False
         self.stage = 0
@@ -240,5 +241,7 @@ def check_action(action, player):
             return close_action(action, player)
         elif verb == "compare":
             return compare_action(action, player)
+        elif verb == "help":
+            return contents["help_text"]
         else:
             return "Sorry, I don't know what you meant by that."
